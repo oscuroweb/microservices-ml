@@ -1,0 +1,103 @@
+// Global variable overrides. Must be declared before importing Valo.
+
+//Titulo de pantalla de carga
+$v-app-loading-text: "Loading Income Predict Service";
+
+
+//Color
+$income-color : #82C344 !default;
+
+//Reglas de diseño
+$v-focus-color: $income-color;
+$v-focus-style: 0 0 3px 2px $v-focus-color;
+$v-selection-color: $v-focus-color !default;
+
+
+
+//Va al final para que funcionen los estilos aplicados
+@import "../valo/valo.scss";
+
+@mixin income {
+  @include valo;
+
+  .v-label-title {
+	//color: $income-color;
+    font-weight: bold;
+    white-space: normal;
+    font-size: 40px;
+    font-variant: small-caps;
+    
+  }
+  
+//	.v-margin-top    {padding-top:    20px;}
+//	.v-margin-bottom {padding-bottom: 20px;}
+	
+	.result-label {
+		font-weight: bold;
+	}
+	
+	.result-label-yes {
+		color: #3366cc;
+	}
+	
+	.result-label-no {
+		color: #cc0000;
+	}
+	
+	.result-label-85 {
+		color: #00b300
+	}
+	
+	.result-label-50 {
+		color: #ff9900
+	}
+	
+	.result-label-0 {
+		color: #ff0000
+	}
+	
+	.banner-label {
+		font-size: 0.75em;
+	}
+	
+	.banner-label-master {
+		color:  #66c2ff;
+		font-weight: bold;
+	}
+	
+	.banner-label-title {
+		color: #ffffff;
+	}
+	
+	
+	.banner-label-author {
+		color: #7575a3;
+		font-style: italic;
+	}
+	
+	.dark-color {
+		background-color: #47476b;
+	}
+	
+	.align-right {
+	  text-align: right;
+	}
+	
+	.align-center {
+	  text-align: center;
+	}
+	
+	.footer {
+	    position: absolute;
+	    bottom: 0;
+	}
+	
+	.footer-color {
+		background-color: #4c7235;
+	}
+	
+	.title-color {
+		color: #4c7235;
+	}
+}
+

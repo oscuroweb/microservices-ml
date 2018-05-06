@@ -6,12 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import oscuroweb.ia.dto.OutputDto.OutputDtoBuilder;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class OutputResultDto implements Serializable {
-	Boolean updated;
+	
+	private static final long serialVersionUID = -593481387719299431L;
+	
+	private Boolean updated;
 }

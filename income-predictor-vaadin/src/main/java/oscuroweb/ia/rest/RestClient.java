@@ -6,8 +6,7 @@ import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
 import oscuroweb.ia.config.AppConfiguration;
-import oscuroweb.ia.dto.InputDto;
-import oscuroweb.ia.dto.InputResultDto;
+import oscuroweb.ia.dto.IncomeDto;
 import oscuroweb.ia.dto.OutputDto;
 import oscuroweb.ia.dto.OutputResultDto;
 
@@ -24,35 +23,18 @@ public class RestClient {
 	@Autowired
 	AppConfiguration config;
 
-	public OutputDto evaluateData(Double age, String workclass, Double fnlwgt, String education, Double educationNum,
-									String maritalStatus, String occupation, String relationship, String race, String sex,
-									Double capitalGain, Double capitalLoss, Double hoursPerWeek, String nativeCountry) {
-		log.info("Inicio getHistoricData");
-		InputDto inputDto = InputDto.builder()
-								.age(age)
-								.workclass(workclass)
-								.fnlwgt(fnlwgt)
-								.education(education)
-								.educationNum(educationNum)
-								.maritalStatus(maritalStatus)
-								.occupation(occupation)
-								.relationship(relationship)
-								.race(race)
-								.sex(sex)
-								.capitalGain(capitalGain)
-								.capitalLoss(capitalLoss)
-								.hoursPerWeek(hoursPerWeek)
-								.nativeCountry(nativeCountry)
-								.build();
+	public OutputDto evaluateData(IncomeDto income) {
+		log.info("Start evaluate: {}", income.toString());
 
-		OutputDto mensaje = config.restTemplate().postForObject(WS_URI_SRV_EVALUATE, inputDto, OutputDto.class);
-		return mensaje;
+		OutputDto output = config.restTemplate().postForObject(WS_URI_SRV_EVALUATE, income, OutputDto.class);
+		return output;
 	}
 
 
-	public OutputResultDto addResult(InputResultDto inputDto) {
-		OutputResultDto mensaje =
-				config.restTemplate().postForObject(WS_URI_SRV_ADDRESULT, inputDto, OutputResultDto.class);
-		return mensaje;
+	public OutputResultDto addResult(IncomeDto incomeResult) {
+		log.info("Start add result: {}", incomeResult);
+		OutputResultDto output =
+				config.restTemplate().postForObject(WS_URI_SRV_ADDRESULT, incomeResult, OutputResultDto.class);
+		return output;
 	}
 }

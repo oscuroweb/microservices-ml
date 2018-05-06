@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import oscuroweb.ia.dto.Column;
-import oscuroweb.ia.dto.InputDto;
+import oscuroweb.ia.dto.IncomeDto;
 import oscuroweb.ia.dto.OutputDto;
 import oscuroweb.ia.service.SparkService;
 
@@ -32,15 +32,16 @@ public class SparkServiceImpl implements SparkService {
 	private String modelFolderPath;
 
 	@Override
-	public OutputDto evaluate(InputDto input) {
+	public OutputDto evaluate(IncomeDto input) {
 		spark.sparkContext().setLogLevel("ERROR");
 		
-		Encoder<InputDto> personEncoder = Encoders.bean(InputDto.class);
+		Encoder<IncomeDto> incomeEncoder = Encoders.bean(IncomeDto.class);
 		Dataset<Row> dataset = spark.createDataset(
 		  Collections.singletonList(input),
-		  personEncoder
+		  incomeEncoder
 		).toDF();
 		
+		dataset.show();
 
 		String[] inputColumn = { 
 				Column.AGE.colName(), 
