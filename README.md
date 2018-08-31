@@ -50,9 +50,24 @@ You can download Apache Spark [here](https://spark.apache.org/downloads.html). P
 
 ##### Running
 
-We need to run all three applications to have the solution working, to do so we only need to go 
+We need to run all three applications to have the solution working, to do so we only need to follow the instructions below:
+
+1. Go to _income-predictor-ml/target_
+1. Check that the file _income-predictor-ml-0.0.1-SNAPSHOT.jar_ exists. If not you should follow the steps described in __Compilation__ section.
+1. Run the project using the command _java -jar income-predictor-ml-0.0.1-SNAPSHOT.jar_, application should now connect to spark hadoop and read input file and create a model using this data.
+1. Go to _income-predictor-service/target_
+1. Check that the file _income-predictor-service-0.0.1-SNAPSHOT.jar_ exists. If not you should follow the steps described in __Compilation__ section.
+1. Run the project using the command _java -jar income-predictor-service-0.0.1-SNAPSHOT.jar_, now service application should be availabe at port 8082.
+1. Go to _income-predictor-vaadin/target_
+1. Check that the file _income-predictor-vaadin-0.0.1-SNAPSHOT.jar_ exists. If not you should follow the steps described in __Compilation__ section.
+1. Run the project using the command _java -jar income-predictor-vaadin-0.0.1-SNAPSHOT.jar_, now web application should be available at port 8080.
+1. You can open your browser and go to [http://localhost:8080](http://localhost:8080) to check the solution.
+
+![alt Screen](https://github.com/oscuroweb/microservices-ml/blob/master/images/Capture.png)
 
 ### Docker
+
+TBD
 
 #### Prerrequisites
 
