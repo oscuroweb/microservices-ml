@@ -90,13 +90,31 @@ You can see below a description for each project.
 
 ### income-predictor-dto
 
-### income-predictor-service
+![alt income-predictor-dto project class diagram](https://github.com/oscuroweb/microservices-ml/blob/master/images/DTO-Diagram.png)
+
+This project includes all Data Transfer Objects needed in the solution, it also includes all the types needed to process the input file.
 
 ### income-predictor-ml
 
+![alt income-predictor-ml project class diagram](https://github.com/oscuroweb/microservices-ml/blob/master/images/ML-Diagram.png)
+
+The Machine-Learning project itself, implements the algo.
+
+### income-predictor-service
+
+![alt income-predictor-service project class diagram](https://github.com/oscuroweb/microservices-ml/blob/master/images/Service-Diagram.png)
+
+Service that exposes the different endpoints to be consumed.
+
 ### income-predictor-vaadin
 
+![alt income-predictor-service project class diagram](https://github.com/oscuroweb/microservices-ml/blob/master/images/Vaadin-Diagram.png)
+
+Web application that shows the results.
+
 ## Process description
+
+You can find the full description in [slideshare](https://www.slideshare.net/oscuroweb/integrando-machine-learning-y-microservicios).
 
 ## Contacts
 
