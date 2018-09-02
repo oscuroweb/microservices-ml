@@ -114,7 +114,9 @@ Web application that shows the results.
 
 ## Process description
 
-You can find the full description in [slideshare](https://www.slideshare.net/oscuroweb/integrando-machine-learning-y-microservicios).
+You can find the full description in [slideshare](https://www.slideshare.net/oscuroweb/integrando-machine-learning-y-microservicios) (in spanish, english translation on going).
+
+![alt Process description](https://github.com/oscuroweb/microservices-ml/blob/master/images/Process.png)
 
 ## Contacts
 
