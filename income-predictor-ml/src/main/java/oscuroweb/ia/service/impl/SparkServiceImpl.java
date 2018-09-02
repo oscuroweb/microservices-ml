@@ -1,6 +1,7 @@
 package oscuroweb.ia.service.impl;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,11 +36,14 @@ public class SparkServiceImpl implements SparkService {
 
 	@Value("${models.path}")
 	private String modelFolderPath;
+	
+	@Value("${models.versioned:false}")
+	private Boolean modelVersioned;
 
 	@Value("${dataset.file}")
 	private String csvFile;
 	
-	
+	private long version = 0;
 
 	/**
 	 * Scheduler Service that construct a Machine Learning model to predict the income.
@@ -47,6 +51,11 @@ public class SparkServiceImpl implements SparkService {
 	@Scheduled(fixedDelay = 360000)
 	@Override
 	public void mlService() {
+		
+		if (modelVersioned) {
+			Instant instant = Instant.now();
+			version = instant.toEpochMilli();
+		}
 		
 		spark.sparkContext().setLogLevel("ERROR");
 
@@ -230,7 +239,7 @@ public class SparkServiceImpl implements SparkService {
 				.withColumnRenamed("_c13", Column.NATIVE_COUNTRY.colName())
 				.withColumnRenamed("_c14", Column.INCOME.colName());
 	}
-
+	
 	/**
 	 * Save model
 	 * @param model Model to save
@@ -238,7 +247,9 @@ public class SparkServiceImpl implements SparkService {
 	 */
 	private void saveModel(MLWritable model, String name) {
 
-		String fullPath = modelFolderPath.concat(name);
+
+		String fullPath = formatPath().concat(name);
+		log.debug("Full path to be saved: " + fullPath);
 
 		try {
 			model.save(fullPath);
@@ -251,6 +262,21 @@ public class SparkServiceImpl implements SparkService {
 			}
 		}
 		log.info("Model {} saved", fullPath);
+	}
+	
+	private String formatPath() {
+		
+		String formatedPath = modelFolderPath;
+		
+		if (!modelFolderPath.endsWith("/")) {
+			formatedPath = modelFolderPath.concat("/");
+		}
+		
+		if (modelVersioned) {
+			formatedPath = modelFolderPath.concat(version + "/");
+		}
+		
+		return formatedPath;
 	}
 
 }
