@@ -1,8 +1,13 @@
 package oscuroweb.ia.service.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.spark.ml.classification.DecisionTreeClassificationModel;
@@ -43,7 +48,7 @@ public class SparkServiceImpl implements SparkService {
 	@Value("${dataset.file}")
 	private String csvFile;
 	
-	private long version = 0;
+//	private long version = 0;
 
 	/**
 	 * Scheduler Service that construct a Machine Learning model to predict the income.
@@ -51,11 +56,6 @@ public class SparkServiceImpl implements SparkService {
 	@Scheduled(fixedDelay = 360000)
 	@Override
 	public void mlService() {
-		
-		if (modelVersioned) {
-			Instant instant = Instant.now();
-			version = instant.toEpochMilli();
-		}
 		
 		spark.sparkContext().setLogLevel("ERROR");
 
@@ -273,10 +273,46 @@ public class SparkServiceImpl implements SparkService {
 		}
 		
 		if (modelVersioned) {
+			Instant instant = Instant.now();
+			Long version = instant.toEpochMilli();
 			formatedPath = modelFolderPath.concat(version + "/");
 		}
 		
 		return formatedPath;
+	}
+	
+	@Override
+	public long getVersion() {
+		if (modelVersioned) {
+			List<Long> lista = getAvailableVersions();
+			lista.sort(Comparator.reverseOrder());
+			if (lista.size() > 0)
+				return lista.get(0);
+			else
+				return 0;
+		} else {
+			return 0;
+		}
+	}
+	
+	@Override
+	public List<Long> getAvailableVersions() {
+		Long[] array = {0l};
+		if (modelVersioned) {
+			File path = new File(modelFolderPath);
+			List<Long> lista = new ArrayList<>();
+			Arrays.asList(path.list()).forEach(f -> {
+				try {
+					Long l = Long.parseLong(f);
+					lista.add(l);
+				} catch (Exception e) {
+					log.debug(e.getMessage());;
+				}
+			});
+			return lista;
+		} else {
+			return Arrays.asList(array);
+		}
 	}
 
 }
