@@ -57,6 +57,9 @@ public class SparkServiceImpl implements SparkService {
 	@Override
 	public void mlService() {
 		
+		Instant instant = Instant.now();
+		Long version = instant.toEpochMilli();
+		
 		spark.sparkContext().setLogLevel("ERROR");
 
 		Dataset<Row> dataset = spark.read()
@@ -81,7 +84,7 @@ public class SparkServiceImpl implements SparkService {
 		for (String modelKey : indexerModels.keySet()) {
 			StringIndexerModel model = indexerModels.get(modelKey);
 			dataset = model.transform(dataset);
-			saveModel(model, modelKey);
+			saveModel(model, modelKey, version);
 
 		}
 
@@ -136,8 +139,8 @@ public class SparkServiceImpl implements SparkService {
 		System.out.println("Test Error Random Forest = " + (1.0 - accuracyRF));
 		
 		// Save the best model
-		saveModel(rfModel, "rfModel");
-		saveModel(dtModel, "dtModel");
+		saveModel(rfModel, "rfModel", version);
+		saveModel(dtModel, "dtModel", version);
 		
 	}
 	
@@ -245,10 +248,10 @@ public class SparkServiceImpl implements SparkService {
 	 * @param model Model to save
 	 * @param name Name of the model
 	 */
-	private void saveModel(MLWritable model, String name) {
+	private void saveModel(MLWritable model, String name, Long version) {
 
 
-		String fullPath = formatPath().concat(name);
+		String fullPath = formatPath(version).concat(name);
 		log.debug("Full path to be saved: " + fullPath);
 
 		try {
@@ -264,18 +267,16 @@ public class SparkServiceImpl implements SparkService {
 		log.info("Model {} saved", fullPath);
 	}
 	
-	private String formatPath() {
+	private String formatPath(Long version) {
 		
 		String formatedPath = modelFolderPath;
 		
-		if (!modelFolderPath.endsWith("/")) {
-			formatedPath = modelFolderPath.concat("/");
+		if (!formatedPath.endsWith("/")) {
+			formatedPath = formatedPath.concat("/");
 		}
 		
 		if (modelVersioned) {
-			Instant instant = Instant.now();
-			Long version = instant.toEpochMilli();
-			formatedPath = modelFolderPath.concat(version + "/");
+			formatedPath = formatedPath.concat(version + "/");
 		}
 		
 		return formatedPath;
