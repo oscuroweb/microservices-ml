@@ -118,6 +118,22 @@ You can find the full description in [slideshare](https://www.slideshare.net/osc
 
 ![alt Process description](https://github.com/oscuroweb/microservices-ml/blob/master/images/Process.png)
 
+## Advanced features
+
+### Model versioning
+
+Model versioning is a ongoing feature that allows the solution to have multiple models generated and available to use. __This feature is not yet complete__ and we do not recomend to enable it unless that you are developing your own solution. To enable the feature you need to follow the instructions below:
+
+1. Go to the _application.properties_ file in _income-predictor-ml_ project and uncomment the _models.versioned_ property. This property should be set at _true_.
+1. Restart the project. Now _income-predictor-ml_ project will generate models into isolated folders.
+
+You can check if the model versioning feature is working:
+
+1. Go to _[IP:PORT]/version_ with your browser, if a 0 is shown then the feature is not working, if you see a date as long number then it's working.
+1. Go to _[IP:PORT]/allVersions_ with your browser, if a list with only one 0 is shown the feature is not working, if you see a list of dates in long format then it's working.
+
+Please note that __the whole solution is not yet prepared to consume different model versions__ so this feature is only available in _income-predictor-ml_ project.
+
 ## Contacts
 
 ### Rafa Hidalgo
