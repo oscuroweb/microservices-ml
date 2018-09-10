@@ -16,6 +16,7 @@ import org.apache.spark.sql.SparkSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import oscuroweb.ia.dto.Column;
 import oscuroweb.ia.dto.IncomeDto;
@@ -30,6 +31,12 @@ public class SparkServiceImpl implements SparkService {
 
 	@Value("${models.path}")
 	private String modelFolderPath;
+	
+	@Value("${models.versioned:false}")
+	private Boolean modelVersioned;
+
+	@Value("${ml.service:none}")
+	private String mlService;
 
 	@Override
 	public OutputDto evaluate(IncomeDto input) {
@@ -64,17 +71,17 @@ public class SparkServiceImpl implements SparkService {
 				.setOutputCol(Column.FEATURES.colName());
 		
 
-		RandomForestClassificationModel model = RandomForestClassificationModel.load(modelFolderPath.concat("rfModel"));
+		RandomForestClassificationModel model = RandomForestClassificationModel.load(formatPath().concat("rfModel"));
 		
 		PipelineModel pipelineModel = new PipelineModel("rfPipeline", new Transformer[] {
-				StringIndexerModel.load(modelFolderPath.concat("_c1")).setInputCol(Column.WORKCLASS.colName()).setOutputCol(Column.WORKCLASS_INDEX.colName()),
-				StringIndexerModel.load(modelFolderPath.concat("_c3")).setInputCol(Column.EDUCATION.colName()).setOutputCol(Column.EDUCATION_INDEX.colName()),
-				StringIndexerModel.load(modelFolderPath.concat("_c5")).setInputCol(Column.MARITAL_STATUS.colName()).setOutputCol(Column.MARITAL_STATUS_INDEX.colName()),
-				StringIndexerModel.load(modelFolderPath.concat("_c6")).setInputCol(Column.OCCUPATION.colName()).setOutputCol(Column.OCCUPATION_INDEX.colName()),
-				StringIndexerModel.load(modelFolderPath.concat("_c7")).setInputCol(Column.RELATIONSHIP.colName()).setOutputCol(Column.RELATIONSHIP_INDEX.colName()),
-				StringIndexerModel.load(modelFolderPath.concat("_c8")).setInputCol(Column.RACE.colName()).setOutputCol(Column.RACE_INDEX.colName()),
-				StringIndexerModel.load(modelFolderPath.concat("_c9")).setInputCol(Column.SEX.colName()).setOutputCol(Column.SEX_INDEX.colName()),
-				StringIndexerModel.load(modelFolderPath.concat("_c13")).setInputCol(Column.NATIVE_COUNTRY.colName()).setOutputCol(Column.NATIVE_COUNTRY_INDEX.colName()),
+				StringIndexerModel.load(formatPath().concat("_c1")).setInputCol(Column.WORKCLASS.colName()).setOutputCol(Column.WORKCLASS_INDEX.colName()),
+				StringIndexerModel.load(formatPath().concat("_c3")).setInputCol(Column.EDUCATION.colName()).setOutputCol(Column.EDUCATION_INDEX.colName()),
+				StringIndexerModel.load(formatPath().concat("_c5")).setInputCol(Column.MARITAL_STATUS.colName()).setOutputCol(Column.MARITAL_STATUS_INDEX.colName()),
+				StringIndexerModel.load(formatPath().concat("_c6")).setInputCol(Column.OCCUPATION.colName()).setOutputCol(Column.OCCUPATION_INDEX.colName()),
+				StringIndexerModel.load(formatPath().concat("_c7")).setInputCol(Column.RELATIONSHIP.colName()).setOutputCol(Column.RELATIONSHIP_INDEX.colName()),
+				StringIndexerModel.load(formatPath().concat("_c8")).setInputCol(Column.RACE.colName()).setOutputCol(Column.RACE_INDEX.colName()),
+				StringIndexerModel.load(formatPath().concat("_c9")).setInputCol(Column.SEX.colName()).setOutputCol(Column.SEX_INDEX.colName()),
+				StringIndexerModel.load(formatPath().concat("_c13")).setInputCol(Column.NATIVE_COUNTRY.colName()).setOutputCol(Column.NATIVE_COUNTRY_INDEX.colName()),
 				vectorAssembler,
 				model
 		});
@@ -89,7 +96,7 @@ public class SparkServiceImpl implements SparkService {
 		IndexToString c14Label = new IndexToString()
 				.setInputCol(Column.PREDICTION.colName())
 				.setOutputCol(Column.PREDICTION_LABEL.colName())
-				.setLabels(StringIndexerModel.load(modelFolderPath.concat("_c14")).labels());
+				.setLabels(StringIndexerModel.load(formatPath().concat("_c14")).labels());
 		predictions = c14Label.transform(predictions);
 		
 		Dataset<Row> predictionsResult = predictions.select(Column.PREDICTION.colName(), Column.PREDICTION_LABEL.colName());
@@ -98,6 +105,31 @@ public class SparkServiceImpl implements SparkService {
 		
 		return OutputDto.builder().label((String)  predictionsResult.collectAsList().get(0).get(1)).build();
 		
+	}
+	
+	private String formatPath() {
+		
+		String formatedPath = modelFolderPath;
+		
+		if (!formatedPath.endsWith("/")) {
+			formatedPath = formatedPath.concat("/");
+		}
+		
+		if (modelVersioned) {
+			formatedPath = formatedPath.concat(getVersion() + "/");
+		}
+		
+		return formatedPath;
+	}
+	
+	private Long getVersion() {
+		if (mlService.equals("none"))
+			return 0l;
+		else {
+			RestTemplate rest = new RestTemplate();
+			Long l = rest.getForObject(mlService, Long.class);
+			return l;
+		}
 	}
 
 }
