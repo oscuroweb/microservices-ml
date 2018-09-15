@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import oscuroweb.ia.dto.Column;
 import oscuroweb.ia.dto.IncomeDto;
 import oscuroweb.ia.dto.OutputDto;
+import oscuroweb.ia.dto.OutputResultDto;
 import oscuroweb.ia.service.SparkService;
 
 @Service
@@ -130,6 +131,10 @@ public class SparkServiceImpl implements SparkService {
 			Long l = rest.getForObject(mlService, Long.class);
 			return l;
 		}
+	}
+	
+	public OutputResultDto addResult(IncomeDto input) {
+		return OutputResultDto.builder().updated(Boolean.TRUE).build();
 	}
 
 }

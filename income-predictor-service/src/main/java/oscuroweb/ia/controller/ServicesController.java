@@ -25,6 +25,6 @@ public class ServicesController {
 	
 	@PostMapping("/addResult")
 	public @ResponseBody OutputResultDto addResult(@RequestBody IncomeDto inputDto) {
-		return null;
+		return sparkService.addResult(inputDto);
 	}
 }
