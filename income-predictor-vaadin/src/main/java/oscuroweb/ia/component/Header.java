@@ -24,7 +24,7 @@ public class Header extends ResponsiveLayout {
     public void build() {
         imageLogo = new Image();
 
-        imageLogo.setSource(new ThemeResource("images/logo_osc.png"));
+        imageLogo.setSource(new ThemeResource("images/logo-white.svg"));
         imageLogo.setHeight(60, Unit.PIXELS);
         
         Label title = new Label("Microservices & Machine Learning");
